@@ -1,24 +1,24 @@
 from django.contrib.auth import models as auth
 from django.db import models
 from shop.chipchop import models as chipchop
-from shop.chipchop.models import Product, Variant
 
 from . import managers # Custom managers that inherit from chipchop managers
 
-class ProductBase(chipchop.ProductAbstract):
+class Product(chipchop.ProductAbstract):
 
     name = models.CharField(max_length=240, null=False, blank=False) # We want everything to have a name.
     slug = models.SlugField(max_length=240, null=False, blank=False) # We want everything to have a slug.
 
-    class Meta:
-        abstract = True
+    objects = managers.ProductManager()
 
-class VariantBase(chipchop.VariantAbstract):
+class Variant(chipchop.VariantAbstract):
+
+    product = models.ForeignKey(Product, unique=False, db_index=True,
+                                null=False, blank=False)
 
     stock_level = models.PositiveIntegerField(default=0, null=False, blank=False) # We want our variants to have quantities
 
-    class Meta:
-        abstract = True
+    objects = managers.VariantManager()
 
 class Order(chipchop.OrderAbstract):
 
@@ -38,7 +38,7 @@ class Cart(chipchop.CartAbstract):
 
 class CartItem(chipchop.CartItemAbstract):
 
-    variant = models.ForeignKey(chipchop.Variant, db_index=True, unique=False, null=False, blank=False, related_name='+') # Required
+    variant = models.ForeignKey(Variant, db_index=True, unique=False, null=False, blank=False, related_name='+') # Required
     cart = models.ForeignKey(Cart, db_index=True, unique=False, null=False, blank=False, related_name='items') # Required
     billing_address = models.ForeignKey(Address, db_index=True, unique=False, null=True, blank=True, related_name='+') # Required
     shipping_address = models.ForeignKey(Address, db_index=True, unique=False, null=True, blank=True, related_name='+') # Required
@@ -47,15 +47,13 @@ class CartItem(chipchop.CartItemAbstract):
 
 ## { NOW THE FUN STUFF }
 
-class Book(ProductBase):
+class Book(Product):
 
     isbn_13 = models.CharField(max_length=13, db_index=True) # We want our books to have this property
 
     objects = managers.BookManager()
 
-class BookVariant(VariantBase):
-
-    item = models.ForeignKey(Book, unique=False, db_index=True, null=False, blank=False, related_name='variants') # Required, link back to the item this variant is a variant of.
+class BookVariant(Variant):
 
     is_used = models.BooleanField(default=False) # We are selling used books
     is_rare = models.BooleanField(default=False) # We are selling rare books
@@ -63,11 +61,11 @@ class BookVariant(VariantBase):
     objects = managers.BookVariantManager()
 
 
-class BookBag(ProductBase):
+class BookBag(Product):
 
     objects = managers.BookBagManager()
 
-class BookBagVariant(VariantBase):
+class BookBagVariant(Variant):
 
     item = models.ForeignKey(BookBag, unique=False, db_index=True, null=False, blank=False, related_name='variants') # Required, link back to the item this variant is a variant of.
 

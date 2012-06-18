@@ -11,15 +11,14 @@ class TestInheritance(TestCase):
         book.save()
 
         bookvariant = models.BookVariant()
-        bookvariant.item = book
+        bookvariant.product = book
         bookvariant.save()
 
-        assert book.get_subtype_instance() == book
-
-        assert models.Product.objects.all()[0].book == book
-        assert models.Product.objects.all()[0].get_subtype_instance() == book
+        assert models.Product.objects.all()[0] == book
+        assert models.Product.objects.all()[0] == book
 
     def test_cart_with_products(self):
+        from decimal import Decimal
         from shop.example import models
 
         book = models.Book()
@@ -28,7 +27,7 @@ class TestInheritance(TestCase):
         book.save()
 
         bookvariant = models.BookVariant()
-        bookvariant.item = book
+        bookvariant.product = book
         bookvariant.save()
 
         cart = models.Cart()
@@ -37,12 +36,16 @@ class TestInheritance(TestCase):
         cartitem1 = models.CartItem()
         cartitem1.variant = bookvariant
         cartitem1.quantity = 2
+        cartitem1.cart = cart
         cartitem1.save()
 
         cartitem2 = models.CartItem()
         cartitem2.variant = bookvariant
         cartitem2.quantity = 3
+        cartitem2.cart = cart
         cartitem2.save()
 
-        print cart.price()
+        cartprice = cart.price()
 
+        assert cartprice.gross == Decimal('5')
+        assert cartprice.tax == Decimal('5') * Decimal('0.0685')

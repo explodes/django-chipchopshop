@@ -64,6 +64,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     'south',
+    'polymorphic',
 
     'chipchop', # Required for unit tests
     'example', # Required for example shop

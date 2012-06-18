@@ -3,9 +3,6 @@ from shop.chipchop import managers as chipchop
 class ProductManager(chipchop.ProductAbstractManager):
     pass
 
-class DisplayableProductManager(chipchop.DisplayableProductAbstractManager):
-    pass
-
 class VariantManager(chipchop.VariantAbstractManager):
     pass
 

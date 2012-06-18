@@ -1,62 +1,10 @@
 from django.conf import settings
 from django.db import models
-from django.dispatch import receiver
+from polymorphic import PolymorphicModel
 
 from . import managers, price
 
-class BaseModel(models.Model):
-
-    def __str__(self):
-        return self.__class__.__name__
-
-    class Meta:
-        abstract = True
-
-class Subtyped(BaseModel):
-
-    subtype_attr = models.CharField(max_length=500, editable=False)
-
-    objects = managers.SubtypedManager()
-
-    class Meta:
-        abstract = True
-
-    def get_subtype_instance(self):
-        """
-        Caches and returns the final subtype instance. If refresh is set,
-        the instance is taken from database, no matter if cached copy
-        exists.
-        """
-        subtype = self
-        path = self.subtype_attr.split()
-        whoami = self._meta.module_name
-        remaining = path[path.index(whoami) + 1:]
-        for r in remaining:
-            subtype = getattr(subtype, r)
-        return subtype
-
-    def store_subtype(self, klass):
-        if not self.id:
-            path = [self]
-            parents = self._meta.parents.keys()
-            while parents:
-                parent = parents[0]
-                path.append(parent)
-                parents = parent._meta.parents.keys()
-            path = [p._meta.module_name for p in reversed(path)]
-            self.subtype_attr = ' '.join(path)
-
-class Product(Subtyped):
-
-    displayed = models.BooleanField(default=True)
-    ''' Override your "subclass's" save method to update this.
-    Displayed products are ones that you want to show up on your site. '''
-
-    objects = managers.ProductManager()
-    displayable = managers.DisplayableProductManager()
-
-
-class ProductAbstract(Product):
+class ProductAbstract(PolymorphicModel):
     ''' 
     IMPLEMENT - Add any fields you want. (name & slug recommended)
     DO NOT SUBLCLASS  - Do not sublclass your implementation. Your product
@@ -67,19 +15,17 @@ class ProductAbstract(Product):
     ''' This is the standard price for an instance of your "subclass". '''
 
     objects = managers.ProductAbstractManager()
-    displayable = managers.DisplayableProductAbstractManager()
 
     class Meta:
         abstract = True
 
-class Variant(Subtyped):
-
-    objects = managers.VariantManager()
-
-class VariantAbstract(Subtyped):
+class VariantAbstract(PolymorphicModel):
     '''
     IMPLEMENT - Add any fields you want. (stock_level recommended)
     '''
+
+    #product = models.ForeignKey(Product, unique=False, db_index=True,
+    #                            null=False, blank=False) # Required
 
     price_offset = models.DecimalField(max_digits=12, decimal_places=4,
                                        null=True, blank=True)
@@ -88,18 +34,19 @@ class VariantAbstract(Subtyped):
 
     objects = managers.VariantAbstractManager()
 
+    class Meta:
+        abstract = True
+
     @property
     def price_for_variant(self):
         ''' How much this variant costs considering the price offset. '''
         if self.price_offset is not None:
-            return self.item.product.price + self.price_offset
+            return self.product.price + self.price_offset
         else:
-            return self.item.product.price
+            return self.product.price
 
-    class Meta:
-        abstract = True
 
-class OrderAbstract(BaseModel):
+class OrderAbstract(models.Model):
     '''
     IMPLEMENT - Add any fields you want. (dates and purchase information
     recommended)
@@ -110,7 +57,7 @@ class OrderAbstract(BaseModel):
     class Meta:
         abstract = True
 
-class AddressAbstract(BaseModel):
+class AddressAbstract(models.Model):
     ''' 
     IMPLEMENT - Add any fields you want.
     '''
@@ -130,7 +77,7 @@ class AddressAbstract(BaseModel):
     class Meta:
         abstract = True
 
-class CartAbstract(BaseModel):
+class CartAbstract(models.Model):
     '''
     IMPLEMENT - Add any fields you want (owner recommended)
               - Add a relationship (one cart to many orders) called order/carts.
@@ -158,8 +105,9 @@ class CartAbstract(BaseModel):
 
     def item_prices(self):
         current_price = price.Price()
-        for item in self.get_subtype_instance().items.all():
-            current_price += item.price()
+        for item in self.items.all():
+            current_price += item.price
+        return current_price
 
     def price(self, billing_address=None, shipping_address=None):
         cart_price = self.cart_price(billing_address=billing_address,
@@ -168,14 +116,14 @@ class CartAbstract(BaseModel):
         return cart_price + item_prices
 
 
-class CartItemAbstract(BaseModel):
+class CartItemAbstract(models.Model):
     '''
     IMPLEMENT - Add any fields you want.
     SUBCLASS.
     '''
 
     ## In subclass of your implementation
-    #variant = models.ForeignKey(chipchop.models.Variant, db_index=True,
+    #variant = models.ForeignKey(Variant, db_index=True,
     #                            unique=False, null=False, blank=False,
     #                            related_name='+') # Required
     #cart = models.ForeignKey(Cart, db_index=True, unique=False, null=False,
@@ -205,7 +153,3 @@ class CartItemAbstract(BaseModel):
                                   shipping_address=self.shipping_address)
         return current_price
 
-@receiver(models.signals.pre_save)
-def _store_content_type(sender, instance, **kwargs):
-    if isinstance(instance, Subtyped):
-        instance.store_subtype(instance)

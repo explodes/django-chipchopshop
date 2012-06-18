@@ -1,21 +1,19 @@
 from django.test import TestCase
 
 
-class TestVariantPrice(TestCase):
+class TestVariantAbstractPrice(TestCase):
 
     def test_priceoffset(self):
         from decimal import Decimal
-        from shop.chipchop.models import VariantAbstract, ProductAbstract
+        from shop.chipchop.models import ProductAbstract, VariantAbstract
 
         p = ProductAbstract()
         p.price = Decimal('100')
 
-        class Item():
-            product = p
 
         v = VariantAbstract()
+        v.product = p
         v.price_offset = Decimal('-1')
-        v.item = Item()
 
         assert v.price_for_variant == Decimal('99')
 
@@ -47,18 +45,17 @@ class TestCartItemContributors(TestCase):
 
     def test_cartitem_CartItemTaxContributor(self):
         from decimal import Decimal
-        from shop.chipchop.models import CartItemAbstract, VariantAbstract, ProductAbstract
+        from shop.chipchop.models import CartItemAbstract, ProductAbstract, VariantAbstract
         from shop.chipchop.price.contributor import CartItemQuantityContributor, CartItemTaxContributor
 
         p = ProductAbstract()
         p.price = Decimal('10')
 
-        class Item():
-            product = p
-
         v = VariantAbstract()
+        v.product = p
         v.price_offset = Decimal('-1')
-        v.item = Item()
+
+
 
         tax_rate = '0.0685'
 
@@ -77,18 +74,15 @@ class TestCartItemContributors(TestCase):
 
     def test_cartitem_CartItemStateTaxContributor(self):
         from decimal import Decimal
-        from shop.chipchop.models import CartItemAbstract, VariantAbstract, ProductAbstract
+        from shop.chipchop.models import CartItemAbstract, ProductAbstract, VariantAbstract
         from shop.chipchop.price.contributor import CartItemQuantityContributor, CartItemStateTaxContributor
 
         p = ProductAbstract()
         p.price = Decimal('10')
 
-        class Item():
-            product = p
-
         v = VariantAbstract()
+        v.product = p
         v.price_offset = Decimal('-1')
-        v.item = Item()
 
         tax_rate = '0.0685'
 
