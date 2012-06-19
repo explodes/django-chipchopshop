@@ -28,6 +28,10 @@ class Price(object):
     def net(self):
         return self._add_two_decimals(self._add_two_decimals(self._add_two_decimals(self._add_two_decimals(self.gross, self.tax), self.shipping), self.handling), self.other)
 
+    @property
+    def shipping_handling(self):
+        return self._add_two_decimals(self.shipping, self.handling)
+
     def _add_two_decimals(self, one, two):
         if two is None:
             return one

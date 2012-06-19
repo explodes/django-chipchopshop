@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 from polymorphic import PolymorphicModel
 
-from . import managers, price
+from . import forms, managers, price
 
 class ProductAbstract(PolymorphicModel):
     ''' 
@@ -18,6 +18,10 @@ class ProductAbstract(PolymorphicModel):
 
     class Meta:
         abstract = True
+
+    def get_variant_form(self, *args, **kwargs):
+        kwargs['product'] = self
+        return forms.registry.get_handler(self.__class__,)(*args, **kwargs)
 
 class VariantAbstract(PolymorphicModel):
     '''
@@ -38,7 +42,7 @@ class VariantAbstract(PolymorphicModel):
         abstract = True
 
     @property
-    def price_for_variant(self):
+    def base_price(self):
         ''' How much this variant costs considering the price offset. '''
         if self.price_offset is not None:
             return self.product.price + self.price_offset
@@ -62,15 +66,15 @@ class AddressAbstract(models.Model):
     IMPLEMENT - Add any fields you want.
     '''
 
-    street_1 = models.CharField(max_length=250, null=True, blank=True)
-    street_2 = models.CharField(max_length=250, null=True, blank=True)
-    city = models.CharField(max_length=250, null=True, blank=True)
-    state = models.CharField(max_length=250, null=True, blank=True)
-    postal = models.CharField(max_length=250, null=True, blank=True)
-    country = models.CharField(max_length=250, null=True, blank=True)
+    #street_1 = models.CharField(max_length=250, null=True, blank=True)
+    #street_2 = models.CharField(max_length=250, null=True, blank=True)
+    #city = models.CharField(max_length=250, null=True, blank=True)
+    #state = models.CharField(max_length=250, null=True, blank=True)
+    #postal = models.CharField(max_length=250, null=True, blank=True)
+    #country = models.CharField(max_length=250, null=True, blank=True)
 
-    email_address = models.EmailField(null=True, blank=True)
-    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    #email_address = models.EmailField(null=True, blank=True)
+    #phone_number = models.CharField(max_length=20, null=True, blank=True)
 
     objects = managers.AddressAbstractManager()
 
@@ -113,8 +117,8 @@ class CartAbstract(models.Model):
         cart_price = self.cart_price(billing_address=billing_address,
                                      shipping_address=shipping_address)
         item_prices = self.item_prices()
-        return cart_price + item_prices
-
+        total_price = cart_price + item_prices
+        return total_price
 
 class CartItemAbstract(models.Model):
     '''

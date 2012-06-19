@@ -37,14 +37,6 @@ class Migration(SchemaMigration):
         # Adding model 'Address'
         db.create_table('example_address', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('street_1', self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True)),
-            ('street_2', self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True)),
-            ('city', self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True)),
-            ('state', self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True)),
-            ('postal', self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True)),
-            ('country', self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True)),
-            ('email_address', self.gf('django.db.models.fields.EmailField')(max_length=75, null=True, blank=True)),
-            ('phone_number', self.gf('django.db.models.fields.CharField')(max_length=20, null=True, blank=True)),
         ))
         db.send_create_signal('example', ['Address'])
 
@@ -91,8 +83,7 @@ class Migration(SchemaMigration):
         # Adding model 'BookBagVariant'
         db.create_table('example_bookbagvariant', (
             ('variant_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['example.Variant'], unique=True, primary_key=True)),
-            ('item', self.gf('django.db.models.fields.related.ForeignKey')(related_name='variants', to=orm['example.BookBag'])),
-            ('color', self.gf('django.db.models.fields.CharField')(unique=True, max_length=10)),
+            ('color', self.gf('django.db.models.fields.CharField')(max_length=10)),
         ))
         db.send_create_signal('example', ['BookBagVariant'])
 
@@ -168,15 +159,7 @@ class Migration(SchemaMigration):
         },
         'example.address': {
             'Meta': {'object_name': 'Address'},
-            'city': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
-            'country': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
-            'email_address': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
-            'postal': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
-            'state': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
-            'street_1': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
-            'street_2': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'})
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         'example.book': {
             'Meta': {'object_name': 'Book', '_ormbases': ['example.Product']},
@@ -189,8 +172,7 @@ class Migration(SchemaMigration):
         },
         'example.bookbagvariant': {
             'Meta': {'object_name': 'BookBagVariant', '_ormbases': ['example.Variant']},
-            'color': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '10'}),
-            'item': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'variants'", 'to': "orm['example.BookBag']"}),
+            'color': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
             'variant_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['example.Variant']", 'unique': 'True', 'primary_key': 'True'})
         },
         'example.bookvariant': {

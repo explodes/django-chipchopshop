@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+{% load static %}
+<html>
+	<head>
+		<link href="{% static 'css/example.css' %}" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		{% include "example/_cart.html" %}
+		<nav>
+			<ul>
+				{% for product in products.all %}
+					<li><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></li>
+				{% endfor %}
+			</ul>
+		</nav>
+		
+		<article id="content">
+			{% block content %}
+			Welcome home
+			{% endblock content %}
+		</article>
+	</body>
+</html>

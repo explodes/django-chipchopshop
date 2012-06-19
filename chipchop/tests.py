@@ -5,7 +5,7 @@ class TestVariantAbstractPrice(TestCase):
 
     def test_priceoffset(self):
         from decimal import Decimal
-        from shop.chipchop.models import ProductAbstract, VariantAbstract
+        from chipchop.models import ProductAbstract, VariantAbstract
 
         p = ProductAbstract()
         p.price = Decimal('100')
@@ -15,19 +15,19 @@ class TestVariantAbstractPrice(TestCase):
         v.product = p
         v.price_offset = Decimal('-1')
 
-        assert v.price_for_variant == Decimal('99')
+        assert v.base_price == Decimal('99')
 
         v.price_offset = None
 
-        assert v.price_for_variant == Decimal('100')
+        assert v.base_price == Decimal('100')
 
 
 class TestCartContributors(TestCase):
 
     def test_cartContributor(self):
         from decimal import Decimal
-        from shop.chipchop.models import CartAbstract
-        from shop.chipchop.price.contributor import CartBaseContributor
+        from chipchop.models import CartAbstract
+        from chipchop.price.contributor import CartBaseContributor
 
         class CartTestContributor(CartBaseContributor):
 
@@ -45,8 +45,8 @@ class TestCartItemContributors(TestCase):
 
     def test_cartitem_CartItemTaxContributor(self):
         from decimal import Decimal
-        from shop.chipchop.models import CartItemAbstract, ProductAbstract, VariantAbstract
-        from shop.chipchop.price.contributor import CartItemQuantityContributor, CartItemTaxContributor
+        from chipchop.models import CartItemAbstract, ProductAbstract, VariantAbstract
+        from chipchop.price.contributor import CartItemQuantityContributor, CartItemTaxContributor
 
         p = ProductAbstract()
         p.price = Decimal('10')
@@ -74,8 +74,8 @@ class TestCartItemContributors(TestCase):
 
     def test_cartitem_CartItemStateTaxContributor(self):
         from decimal import Decimal
-        from shop.chipchop.models import CartItemAbstract, ProductAbstract, VariantAbstract
-        from shop.chipchop.price.contributor import CartItemQuantityContributor, CartItemStateTaxContributor
+        from chipchop.models import CartItemAbstract, ProductAbstract, VariantAbstract
+        from chipchop.price.contributor import CartItemQuantityContributor, CartItemStateTaxContributor
 
         p = ProductAbstract()
         p.price = Decimal('10')
@@ -106,7 +106,7 @@ class TestCartItemContributors(TestCase):
 class TestPrices(TestCase):
 
     def test_IAddUnknown(self):
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
         def add_unknown():
             price = Price()
@@ -121,7 +121,7 @@ class TestPrices(TestCase):
 
 
     def test_IAddNone(self):
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
         price1 = Price()
         price2 = Price()
@@ -138,7 +138,7 @@ class TestPrices(TestCase):
 
     def test_IAddNoneToAll(self):
         from decimal import Decimal
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
 
         price1 = Price()
@@ -156,7 +156,7 @@ class TestPrices(TestCase):
 
     def test_IAddAllToNone(self):
         from decimal import Decimal
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
 
         price1 = Price(gross=Decimal('1'), tax=Decimal('1'), shipping=Decimal('1'), handling=Decimal('1'), other=Decimal('1'))
@@ -174,7 +174,7 @@ class TestPrices(TestCase):
 
     def test_IAddAllToAll(self):
         from decimal import Decimal
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
 
         price1 = Price(gross=Decimal('1'), tax=Decimal('1'), shipping=Decimal('1'), handling=Decimal('1'), other=Decimal('1'))
@@ -190,7 +190,7 @@ class TestPrices(TestCase):
         assert price1.net == Decimal('10')
 
     def test_AddUnknown(self):
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
         def add_unknown():
             price = Price()
@@ -205,7 +205,7 @@ class TestPrices(TestCase):
 
 
     def test_AddNone(self):
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
         price1 = Price()
         price2 = Price()
@@ -222,7 +222,7 @@ class TestPrices(TestCase):
 
     def test_AddNoneToAll(self):
         from decimal import Decimal
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
 
         price1 = Price()
@@ -240,7 +240,7 @@ class TestPrices(TestCase):
 
     def test_AddAllToNone(self):
         from decimal import Decimal
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
 
         price1 = Price(gross=Decimal('1'), tax=Decimal('1'), shipping=Decimal('1'), handling=Decimal('1'), other=Decimal('1'))
@@ -257,7 +257,7 @@ class TestPrices(TestCase):
 
     def test_AddAllToAll(self):
         from decimal import Decimal
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
 
         price1 = Price(gross=Decimal('1'), tax=Decimal('1'), shipping=Decimal('1'), handling=Decimal('1'), other=Decimal('1'))
@@ -274,7 +274,7 @@ class TestPrices(TestCase):
 
     def test_addGross(self):
         from decimal import Decimal
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
         price1 = Price(gross=None)
         price2 = Price(gross=Decimal('1'))
@@ -294,7 +294,7 @@ class TestPrices(TestCase):
 
     def test_addTax(self):
         from decimal import Decimal
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
         price1 = Price(tax=None)
         price2 = Price(tax=Decimal('1'))
@@ -314,7 +314,7 @@ class TestPrices(TestCase):
 
     def test_addShipping(self):
         from decimal import Decimal
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
         price1 = Price(shipping=None)
         price2 = Price(shipping=Decimal('1'))
@@ -334,7 +334,7 @@ class TestPrices(TestCase):
 
     def test_addHandling(self):
         from decimal import Decimal
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
         price1 = Price(handling=None)
         price2 = Price(handling=Decimal('1'))
@@ -354,7 +354,7 @@ class TestPrices(TestCase):
 
     def test_addOther(self):
         from decimal import Decimal
-        from shop.chipchop.price import Price
+        from chipchop.price import Price
 
         price1 = Price(other=None)
         price2 = Price(other=Decimal('1'))

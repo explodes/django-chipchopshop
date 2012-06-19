@@ -1,0 +1,43 @@
+nav{
+	float:left;
+}
+nav li{
+	list-style:none;
+	position:relative;
+	left:-30px;
+}
+nav a{
+	color:#cd5832;
+	font-size:1.2em;
+}
+body{
+	font-size:62.5%;
+	font-family:helvetica, arial, sans-serif;
+}
+#cart{
+	font-size:1.2em;
+}
+#cart dl{
+	list-style:none outside none;
+}
+#cart dd{
+	display:inline;
+}
+#cart dt{
+	font-weight:bold;
+}
+#content{
+	font-size:1.4em;
+	color:#444;
+}
+#content h1{
+	font-size:2.4em;
+	color:#444;
+}
+#variants h3{
+	font-weight:bold;
+	font-size:1.6em;
+}
+#variants li{
+	list-style:none;
+}

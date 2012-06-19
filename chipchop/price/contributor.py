@@ -31,7 +31,7 @@ class CartItemBaseContributor(object):
 class CartItemQuantityContributor(CartItemBaseContributor):
 
     def contribute(self, cart_item, current_price, billing_address=None, shipping_address=None):
-        current_price.add_gross(cart_item.variant.price_for_variant * cart_item.quantity)
+        current_price.add_gross(cart_item.variant.base_price * cart_item.quantity)
 
 class CartItemTaxContributor(CartItemBaseContributor):
 

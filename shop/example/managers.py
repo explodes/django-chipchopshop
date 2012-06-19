@@ -1,4 +1,4 @@
-from shop.chipchop import managers as chipchop
+from chipchop import managers as chipchop
 
 class ProductManager(chipchop.ProductAbstractManager):
     pass

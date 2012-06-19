@@ -1,0 +1,14 @@
+{% extends "example/base.html"%}
+
+{% block content %}
+
+{% for item in shopping_cart_items %}
+<form action="" method="post">
+	{{ item.variant }} 
+	<input type="hidden" name="item" value="{{ item.pk }}" />
+	<input type="text" name="quantity" value="{{ item.quantity }}"/>
+	<input type="submit" value="Update"/>
+	{% csrf_token %}
+</form>
+{% endfor %}
+{% endblock content %}

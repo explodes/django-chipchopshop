@@ -1,0 +1,31 @@
+{% extends "example/base.html" %}
+{% block content %}
+<section id="product">
+	<h1>{{ product.name }}</h1>
+	
+	{% if success %}<h4>Product was added to your cart!</h4>{% endif %}
+	
+	<ul class="details">
+		{% if product.isbn_13 %}<li><dt>ISBN:</dt><dd>{{ product.isbn_13 }}</dd></li>{% endif %}
+	</ul>
+	
+	<section id="variants">
+		<h3>Stock</h3>
+		<ul id="variants">
+			{% for variant in product.variants.all %}
+				<li>{{ variant }} @ ${{ variant.base_price|floatformat:2 }}</li>
+			{% endfor %}
+		</ul>
+	</section>
+	
+	{% if form %}
+	<form id="variantform" method="post" action="">
+		<ul>
+			{{ form.as_ul }}
+			{% csrf_token %}
+			<input type="submit" value="Add to cart" />
+		</ul>
+	</form>
+	{% endif %}
+</section>
+{% endblock %}

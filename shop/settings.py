@@ -1,6 +1,8 @@
 import os
+import site
 
 rel = lambda * x: os.path.abspath(os.path.join(os.path.dirname(__file__), *x))
+site.addsitedir(rel('..'))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -26,10 +28,18 @@ USE_L10N = True
 MEDIA_ROOT = ''
 MEDIA_URL = ''
 
-STATIC_ROOT = ''
+STATIC_ROOT = rel('../static')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.request',
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.media',
+    'example.context_processors.cart',
+    'example.context_processors.products',
 )
 
 STATICFILES_FINDERS = (
@@ -51,7 +61,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
-ROOT_URLCONF = 'ChipChopShop.urls'
+ROOT_URLCONF = 'shop.urls'
 
 TEMPLATE_DIRS = (
 )
@@ -61,12 +71,12 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.staticfiles',
     'django.contrib.admin',
 
     'south',
-    'polymorphic',
 
-    'chipchop', # Required for unit tests
+    'chipchop', # Required for unit tests & template tags
     'example', # Required for example shop
 )
 
@@ -99,6 +109,5 @@ CHIPCHOP_CART_PRICE_CONTRIBUTORS = (
 CHIPCHOP_CARTITEM_PRICE_CONTRIBUTORS = (
     contributor.CartItemQuantityContributor(), # Adds price * quantity to the line item gross price
     contributor.CartItemTaxContributor(Decimal('0.0685')), # Taxes each item, independent of location. Utah online sales tax, as of this time, is 6.85%
-    contributor.CartItemStateTaxContributor(dict(US=dict(UT=Decimal('0.0685')))), # Tax only US-UT 6.85%
-
+    #contributor.CartItemStateTaxContributor(dict(US=dict(UT=Decimal('0.0685')))), # Tax only US-UT 6.85%
 )

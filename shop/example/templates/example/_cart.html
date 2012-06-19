@@ -1,0 +1,18 @@
+{% load price %}
+<section id="cart">
+	<a href="{% url cart %}">View Cart</a>
+	<dl>
+		<dt>Num Items.</dt>
+		<dd>{{ shopping_cart_count }}</dd>
+		<dt>Price:</dt>
+		<dd>${{ shopping_cart_price|gross|floatformat:2 }}</dd>
+		<dt> +Tax:</dt>
+		<dd>${{ shopping_cart_price|tax|floatformat:2 }}</dd>
+		<dt> +S&amp;H:</dt>
+		<dd>${{ shopping_cart_price|shipping_handling|floatformat:2 }}</dd>
+		<dt> +Misc:</dt>
+		<dd>${{ shopping_cart_price|other|floatformat:2 }}</dd>
+		<dt>TOTAL:</dt>
+		<dd>${{ shopping_cart_price|net|floatformat:2 }}</dd>
+	</dl>
+</section>
